@@ -1,0 +1,101 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Главная страница</title>
+    <!-- Подключаем CSS стили -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Подключаем панель меню из файла menu.ejs -->
+    <%- include('menu.ejs') %>
+
+    <div class="main-sector">
+        <div id="reg-form-div">
+            <h2>Регистрация</h2>
+            <form method="post" action="/registration" id="reg-form">
+                <label for="User_name">Придумайте имя пользователя:</label>
+                <input type="text" name="User_name" id="User_name" autocomplete="nickname" placeholder="Введите ваш username">
+                <label for="User_email">Введите email:</label>
+                <input type="email" name="User_email" id="User_email" autocomplete="email" placeholder="Введите ваш email">
+                <label for="User_password">Придумайте пароль:</label>
+                <input type="password" name="User_password" id="User_password" autocomplete="new-password"  placeholder="*****">
+                <label for="User_password_confirm">Повторите пароль:</label>    
+                <input type="password" name="User_password_confirm" id="User_password_confirm" placeholder="*****">
+                <input type="submit" value="Зарегистрироваться" id="register-btn" disabled>
+            </form>
+        </div>
+        <div id="log-form-div">
+            <h2>Авторизация:</h2>
+            <form method="post" action="/login" id="login-form">
+                <label for="User_name">Имя пользователя/email:</label>
+                <input type="text" name="User_name" id="User_name" autocomplete="nickname" class="placeholder" placeholder="Введите ваш username/email">
+                <label for="User_password">Ваш пароль:</label>
+                <input type="password" name="User_password" id="User_password" autocomplete="current-password" class="placeholder" placeholder="*****">
+                <input type="submit" value="Войти" id="login-btn" disabled> 
+            </form>
+            <p onclick="open_reg()">Нет аккаунта? Создайте прямо сейчас!</p>
+        </div>
+    </div>
+</body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<script>
+    let open_reg = function(){
+        document.getElementById("reg-form-div").style.display = 'flex';
+        document.getElementById("log-form-div").style.display = 'none';
+    };
+
+    $(document).ready(function() {
+        const form = $('#login-form');
+        const loginButton = $('#login-btn');
+
+        form.on('input', function() {
+            let allFilled = true;
+            form.find('input').each(function() {
+                if ($(this).val() === '') {
+                    allFilled = false;
+                    return false; // Прерываем each, если нашли пустое поле
+                }
+            });
+
+            if (allFilled) {
+                loginButton.prop('disabled', false);
+            } else {
+                loginButton.prop('disabled', true);
+            }
+        });
+    });
+
+    $(document).ready(function() {
+    const regForm = $('#reg-form');
+    const registerButton = $('#register-btn');
+
+    regForm.on('input', function() {
+        let allFilled = true;
+        regForm.find('input').each(function() {
+            if ($(this).val() === '') {
+                allFilled = false;
+                return false; // Прерываем each, если нашли пустое поле
+            }
+        });
+
+        if (allFilled) {
+            registerButton.prop('disabled', false);
+        } else {
+            registerButton.prop('disabled', true);
+        }
+    });
+});
+
+    function validateRegistrationForm() {
+        var password = document.getElementById("User_password").value;
+        var confirmPassword = document.getElementById("User_password_confirm").value;
+
+        if (password !== confirmPassword) {
+            alert("Пароли не совпадают");
+            return false;
+        }
+        return true;
+    }
+</script>
+</html>

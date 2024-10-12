@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error Page</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <!-- Подключаем панель меню из файла menu.ejs -->
+    <%- include('menu.ejs') %>
+    <div class="main-sector">
+        <div class="admin-panel">
+            <button id="addInfoBtn">Добавить информацию</button>
+            <button id="editInfoBtn">Редактировать информацию</button>
+            <button id="feedbackInfoBtn">Просмотр обратной связи</button>
+            <button id="deleteInfoBtn">Удалить информацию</button>
+        </div>
+
+        <div class="content-management">
+            <!-- Блок для добавления информации -->
+            <div id="addBlock" style="display: none;">
+                <div class="form-section">
+                    <form id="addForm" method="post" action="/Add_card" enctype="multipart/form-data">
+                        <h2 style="color: #fff; text-align: center;">Добавить карточку:</h2>
+                        <label for="name">Имя героя:</label>
+                        <input type="text" id="name" name="name" required>
+        
+                        <label for="primary_attribute">Основной атрибут:</label>
+                        <input type="text" id="primary_attribute" name="primary_attribute" required>
+        
+                        <label for="image_url">Изображение для карточки:</label>
+                        <input type="file" id="image_url" name="image_url" accept="image/*" required>
+                        <img id="image_preview" src="#" alt="Image Preview" style="max-width: 200px; max-height: 200px; display: none; margin-bottom: 10px;">
+        
+                        <label for="background_image_url">Изображение заднего фона:</label>
+                        <input type="file" id="background_image_url" name="background_image_url" accept="image/*" required>
+                        <img id="background_image_preview" src="#" alt="Background Image Preview" style="max-width: 200px; max-height: 200px; display: none; margin-bottom: 10px;">
+        
+                        <label for="attack_type">Тип атаки:</label>
+                        <input type="text" id="attack_type" name="attack_type" required>
+        
+                        <label for="complexity">Сложность:</label>
+                        <input type="number" id="complexity" name="complexity" required>
+        
+                        <label for="short_description">Краткое описание:</label>
+                        <textarea id="short_description" name="short_description"></textarea>
+        
+                        <label for="full_story_url">URL полной истории:</label>
+                        <input type="text" id="full_story_url" name="full_story_url">
+        
+                        <label for="background_color">Цвет фона:</label>
+                        <input type="color" id="background_color" name="background_color" value="#1e1e1e">
+        
+                        <label for="text_color">Цвет текста:</label>
+                        <input type="color" id="text_color" name="text_color" value="#ffffff">
+        
+                        <label for="highlight_color">Цвет выделения:</label>
+                        <input type="color" id="highlight_color" name="highlight_color" value="#ff4500">
+        
+                        <label for="secondary_color">Вторичный цвет:</label>
+                        <input type="color" id="secondary_color" name="secondary_color" value="#87ceeb">
+        
+                        <button type="submit">Добавить</button>
+                    </form>
+        
+                    <form id="addAbilityForm" method="post" action="/Add_ability" enctype="multipart/form-data">
+                        <h2 style="color: #fff; text-align: center;">Добавить способность:</h2>
+                        <label for="hero_id">Герой:</label>
+                        <select id="hero_id" name="hero_id" required>
+                            <% heroes.forEach(hero => { %>
+                                <option value="<%= hero.hero_id %>"><%= hero.name %></option>
+                            <% }); %>
+                        </select>
+        
+                        <label for="name">Название способности:</label>
+                        <input type="text" id="name" name="name" required>
+        
+                        <label for="image_url">Изображение способности:</label>
+                        <input type="file" id="ability_image_url" name="image_url" accept="image/*" required>
+                        <img id="ability_image_preview" src="#" alt="Image Preview" style="max-width: 200px; max-height: 200px; display: none; margin-bottom: 10px;">
+
+
+                        <label for="video_url">Видео способности:</label>
+                        <input type="file" id="video_url" name="video_url" accept="video/*">
+                        <video id="video_preview" controls style="max-width: 200px; display: none; margin-bottom: 10px;"></video>
+        
+                        <label for="description">Описание:</label>
+                        <textarea id="description" name="description" required></textarea>
+        
+                        <label for="specification">Спецификация (JSON):</label>
+                        <textarea id="specification" name="specification" required></textarea>
+        
+                        <button onclick="" type="submit">Добавить</button>
+                    </form>
+                    </div>
+                </div>
+
+            <!-- Блок для удаления информации -->
+            <div id="deleteBlock" style="display: none;">
+                <h2 style="color: #fff; text-align: center;">Удалить информацию:</h2>
+                <form id="deleteForm" method="post" action="/Delete_card?_method=delete">
+                    <label for="delete_hero_id">Выберите героя:</label>
+                    <select id="delete_hero_id" name="hero_id" required>
+                        <% heroes.forEach(hero => { %>
+                            <option value="<%= hero.hero_id %>"><%= hero.name %></option>
+                        <% }); %>
+                    </select>
+                    <button type="submit">Удалить карточку героя</button>
+                </form>
+
+                <!-- Блок для удаления способностей -->
+                <div id="deleteAbilityBlock" style="display: none;">
+                    <h3>Удалить способности:</h3>
+                    <div id="abilityButtons">
+                        <!-- Здесь будут отображаться кнопки для удаления способностей -->
+                    </div>
+                </div>
+            </div>
+
+            <div id="editBlock" style="display: none;">
+                <h2 style="color: #fff; text-align: center;">Редактировать информацию:</h2>
+                <p style="color: #fff; text-align: center;">Выберите карточку для редактирования</p>
+                <div class="hero-cards-container">
+                    <% heroes.forEach(hero => { %>
+                        <div class="hero-card" data-hero-id="<%= hero.hero_id %>" data-attribute="<%= hero.primary_attribute %>" style="background-image: url('<%= hero.image_url %>');">
+                            <span><%= '⯁'.repeat(hero.complexity) + '⬚'.repeat(3 - hero.complexity) %></span>
+                            <div class="hero-details">
+                                <img src="/images/<%= hero.primary_attribute %>.png" alt="<%= hero.primary_attribute %>" class="primary-attribute">
+                                <h3 class="hero-name"><%= hero.name %></h3>
+                            </div>
+                        </div>
+                    <% }); %>
+                </div>
+            </div>              
+
+            <div id="feedbackBlock" style="display: none;">
+                <h2 style="color: #fff; text-align: center;">Просмотр обратной связи:</h2>
+                <table id="feedbackTable" style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr>
+                            <th>Имя пользователя</th>
+                            <th>Email</th>
+                            <th>Тема</th>
+                            <th>Сообщение</th>
+                            <th>Дата</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                    </tbody>
+                </table>
+            </div>            
+
+
+        </div>        
+    </div>
+</body>
+<script>
+    // Получаем кнопки и блоки
+    const addInfoBtn = document.getElementById('addInfoBtn');
+    const addBlock = document.getElementById('addBlock');
+    const deleteInfoBtn = document.getElementById('deleteInfoBtn');
+    const deleteBlock = document.getElementById('deleteBlock');
+    const deleteHeroSelect = document.getElementById('delete_hero_id');
+    const deleteAbilities = document.getElementById('deleteAbilities');
+    const abilityButtons = document.getElementById('abilityButtons');
+    // Получаем ссылки на элементы предварительного просмотра
+    const imageInput = document.getElementById('image_url');
+    const backgroundImageInput = document.getElementById('background_image_url');
+    const imagePreview = document.getElementById('image_preview');
+    const backgroundImagePreview = document.getElementById('background_image_preview');
+    
+    const feedbackInfoBtn = document.getElementById('feedbackInfoBtn');
+    const feedbackBlock = document.getElementById('feedbackBlock');
+
+    // Функция для скрытия всех блоков, кроме первого
+    function hideAllBlocks() {
+        console.log($('.content-management > div'));
+        $('.content-management > div').css('display', 'none');
+    }
+    // События для кнопок меню
+    $('#addInfoBtn').click(() => {
+        hideAllBlocks();
+        $('#addBlock').css('display', 'block');
+    });
+
+    $('#deleteInfoBtn').click(() => {
+        hideAllBlocks();
+        $('#deleteBlock').css('display', 'block');
+    });
+
+    // Добавляем обработчик для карточек героев
+    $(document).on('click', '.hero-card', function() {
+        var heroId = $(this).data('hero-id');
+        window.location.href = '/edit_hero/' + heroId;
+    });
+
+    // События для кнопок меню
+    $('#editInfoBtn').click(() => {
+        hideAllBlocks();
+        $('#editBlock').css('display', 'block');
+    });
+
+    // Добавляем обработчик события изменения значений элементов input type="file"
+    imageInput.addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                imagePreview.src = e.target.result;
+                imagePreview.style.display = 'block';
+            }
+            reader.readAsDataURL(file);
+        }
+    });
+
+    backgroundImageInput.addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                backgroundImagePreview.src = e.target.result;
+                backgroundImagePreview.style.display = 'block';
+            }
+            reader.readAsDataURL(file);
+        }
+    });
+
+    document.getElementById("ability_image_url").addEventListener("change", function() {
+    const file = this.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            document.getElementById("ability_image_preview").src = event.target.result;
+            document.getElementById("ability_image_preview").style.display = "block";
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
+    // Прослушивание изменений в выбранных файлах изображения
+    document.getElementById("image_url").addEventListener("change", function() {
+    const file = this.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+        document.getElementById("image_preview").src = event.target.result;
+        document.getElementById("image_preview").style.display = "block";
+        };
+        reader.readAsDataURL(file);
+    }
+    });
+
+    // Прослушивание изменений в выбранных файлах видео
+    document.getElementById("video_url").addEventListener("change", function() {
+    const file = this.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+        document.getElementById("video_preview").src = event.target.result;
+        document.getElementById("video_preview").style.display = "block";
+        };
+        reader.readAsDataURL(file);
+    }
+    });
+
+    // Обработчик события для выбора героя
+$('#delete_hero_id').change(function() {
+    var heroId = $(this).val();
+    
+    // Отправляем AJAX-запрос для получения списка способностей героя
+    $.ajax({
+        type: 'GET',
+        url: '/get_abilities/' + heroId,
+        success: function(response) {
+            // Очищаем блок с кнопками способностей
+            $('#abilityButtons').empty();
+            
+            // Добавляем кнопки для удаления способностей
+            response.abilities.forEach(function(ability) {
+                $('#abilityButtons').append('<button class="deleteAbilityBtn" data-ability-id="' + ability.ability_id + '">Удалить способность: ' + ability.name + '</button>');
+            });
+
+            // Показываем блок с кнопками способностей
+            $('#deleteAbilityBlock').show();
+        },
+        error: function(xhr, status, error) {
+            console.error('Ошибка при выполнении AJAX-запроса: ' + error);
+        }
+    });
+});
+
+// Обработчик события для удаления способности
+$(document).on('click', '.deleteAbilityBtn', function() {
+    var abilityId = $(this).data('ability-id');
+    
+    // Отправляем AJAX-запрос для удаления способности
+    $.ajax({
+        type: 'delete',
+        url: '/delete_ability/' + abilityId,
+        success: function(response) {
+            // Обновляем список способностей
+            $('#delete_hero_id').trigger('change');
+        },
+        error: function(xhr, status, error) {
+            console.error('Ошибка при выполнении AJAX-запроса: ' + error);
+        }
+    });
+});
+
+
+feedbackInfoBtn.addEventListener('click', function() {
+    console.log("1131");
+    hideAllBlocks();
+    $('#feedbackBlock').css('display', 'block');
+
+    // Отправляем AJAX-запрос для получения данных обратной связи
+    $.ajax({
+        type: 'GET',
+        url: '/get_feedback',
+        success: function(response) {
+            // Очищаем таблицу обратной связи
+            $('#feedbackTable tbody').empty();
+            
+            // Заполняем таблицу новыми данными
+            response.feedback.forEach(function(item) {
+                $('#feedbackTable tbody').append(
+                    '<tr>' +
+                    '<td>' + item.user_name + '</td>' +
+                    '<td>' + item.user_email + '</td>' +
+                    '<td>' + item.theme + '</td>' +
+                    '<td>' + item.message + '</td>' +
+                    '<td>' + item.created_at + '</td>' +
+                    '</tr>'
+                );
+            });
+        },
+        error: function(xhr, status, error) {
+            console.error('Ошибка при выполнении AJAX-запроса: ' + error);
+        }
+    });
+});
+</script>
+</html>

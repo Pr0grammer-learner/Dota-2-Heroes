@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Главная страница</title>
+    <!-- Подключаем CSS стили -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+        <!-- Подключаем панель меню из файла menu.ejs -->
+        <%- include('menu.ejs') %>
+    
+        <div class="main-sector">
+        <!-- Информационный блок о возможностях проекта -->
+        <div id="info-block">
+            <h1>Добро пожаловать на Dota 2 Heroes!</h1>
+            <p>Здесь вы найдете полный список героев из игры Dota 2, а также информацию о их способностях, характеристиках и многое другое.</p>
+            <p>Присоединяйтесь к нам, чтобы узнать больше о вашем любимом мире Dota 2 и стать лучшим игроком!</p>
+            <!-- Дополнительные сведения о проекте -->
+            <button id="hide-info">Скрыть информацию</button>
+        </div>
+        
+
+        <div class="content">
+            <!-- Блок для фильтрации карточек товаров/статей -->
+            <div id="filter-block">
+                <h2>Фильтр</h2>
+                <!-- Форма для фильтрации -->
+                <div id="filter-options">
+                    <label>
+                        <input type="checkbox" name="primary_attribute" value="Сила">
+                        <img src="images/Сила.png" alt="Strength Icon">
+                        Сила
+                    </label>
+                    <label>
+                        <input type="checkbox" name="primary_attribute" value="Ловкость">
+                        <img src="images/Ловкость.png" alt="Agility Icon">
+                        Ловкость
+                    </label>
+                    <label>
+                        <input type="checkbox" name="primary_attribute" value="Интеллект">
+                        <img src="images/Интеллект.png" alt="Intelligence Icon">
+                        Интеллект
+                    </label>
+                    <label>
+                        <input type="checkbox" name="primary_attribute" value="Универсальный">
+                        <img src="images/Универсальный.png" alt="Universal Icon">
+                        Универсальный
+                    </label>
+
+                    <h3>Сложность</h3>
+                    <label>
+                        <input type="checkbox" name="complexity" value="1">
+                        1
+                    </label>
+                    <label>
+                        <input type="checkbox" name="complexity" value="2">
+                        2
+                    </label>
+                    <label>
+                        <input type="checkbox" name="complexity" value="3">
+                        3
+                    </label>
+                </div>
+                <button id="show-all">Показать все записи</button>
+            </div>
+
+            <!-- Контейнер для карточек  -->
+            <div class="hero-cards-container">
+                <% heroes.forEach(hero => { %>
+                    <div class="hero-card" data-attribute="<%= hero.primary_attribute %>" data-complexity="<%= hero.complexity %>" style="background-image: url('<%= hero.image_url %>');" onclick="viewHero('<%= hero.name %>')">
+                        <span><%= '⯁'.repeat(hero.complexity) + '⬚'.repeat(3 - hero.complexity) %>
+                        <div class="hero-details">
+                            <img src="/images/<%= hero.primary_attribute %>.png" alt="<%= hero.primary_attribute %>" class="primary-attribute">
+                            <!-- <span class="attribute-text"><%= hero.primary_attribute %></span> -->
+                            <h3 class="hero-name"><%= hero.name %></h3>
+                        </div>
+                    </div>
+                <% }); %>
+        </div>
+    </div>
+
+    <!-- Cкрипт для работы с клиентской логикой -->
+    <script>
+        function viewHero(heroName) {
+            window.location.href = `hero/${heroName}`;
+        }
+
+        document.getElementById('hide-info').addEventListener('click', function() {
+            const infoBlock = document.getElementById('info-block');
+            infoBlock.style.display = 'none';
+        });
+
+        document.getElementById('show-all').addEventListener('click', function() {
+            const checkboxes = document.querySelectorAll('#filter-options input[type="checkbox"]');
+            checkboxes.forEach(checkbox => checkbox.checked = false);
+            filterCards();
+        });
+
+        document.querySelectorAll('#filter-options input[type="checkbox"]').forEach(checkbox => {
+            checkbox.addEventListener('change', filterCards);
+        });
+
+        function filterCards() {
+            const attributeCheckboxes = document.querySelectorAll('#filter-options input[name="primary_attribute"]:checked');
+            const complexityCheckboxes = document.querySelectorAll('#filter-options input[name="complexity"]:checked');
+            
+            const selectedAttributes = Array.from(attributeCheckboxes).map(checkbox => checkbox.value);
+            const selectedComplexities = Array.from(complexityCheckboxes).map(checkbox => checkbox.value);
+            
+            const cards = document.querySelectorAll('.hero-card');
+
+            cards.forEach(card => {
+                const cardAttribute = card.getAttribute('data-attribute');
+                const cardComplexity = card.getAttribute('data-complexity');
+
+                const matchesAttribute = selectedAttributes.length === 0 || selectedAttributes.includes(cardAttribute);
+                const matchesComplexity = selectedComplexities.length === 0 || selectedComplexities.includes(cardComplexity);
+
+                if (matchesAttribute && matchesComplexity) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Страница не найдена</title>
+    <!-- Подключаем CSS стили -->
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <!-- Подключаем панель меню из файла menu.ejs -->
+    <%- include('menu.ejs') %>
+    
+    <div class="not-found-container">
+        <h1>404</h1>
+        <h2>Упс! Страница не найдена</h2>
+        <p>К сожалению, страница, которую вы ищете, не существует. Возможно, она была удалена или вы ввели неправильный URL.</p>
+        <a href="/" class="home-button">Вернуться на главную</a>
+    </div>
+</body>
+</html>

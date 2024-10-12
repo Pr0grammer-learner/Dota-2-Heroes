@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Редактировать героя - <%= hero.name %></title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <!-- Подключаем панель меню из файла menu.ejs -->
+    <%- include('menu.ejs') %>
+    <div class="content-management">
+        <div id="addBlock">
+            <div class="form-edit-section">
+                <form id="addForm" method="post" action="/hero_edit/<%= hero.hero_id %>?_method=PUT" enctype="multipart/form-data">
+                    <h2 style="color: #fff; text-align: center;">Редактировать карточку:</h2>
+                    <label for="name">Имя героя:</label>
+                    <input type="text" id="name" name="name" value="<%= hero.name %>" required>
+
+                    <label for="primary_attribute">Основной атрибут:</label>
+                    <input type="text" id="primary_attribute" name="primary_attribute" value="<%= hero.primary_attribute %>" required>
+
+                    <label for="image_url">Изображение для карточки:</label>
+                    <input type="file" id="image_url" name="image_url" accept="image/*">
+
+                    <label for="background_image_url">Изображение заднего фона:</label>
+                    <input type="file" id="background_image_url" name="background_image_url" accept="image/*">
+
+                    <label for="attack_type">Тип атаки:</label>
+                    <input type="text" id="attack_type" name="attack_type" value="<%= hero.attack_type %>" required>
+
+                    <label for="complexity">Сложность:</label>
+                    <input type="number" id="complexity" name="complexity" value="<%= hero.complexity %>" required>
+
+                    <label for="short_description">Краткое описание:</label>
+                    <textarea id="short_description" name="short_description"><%= hero.short_description %></textarea>
+
+                    <label for="full_story_url">URL полной истории:</label>
+                    <input type="text" id="full_story_url" name="full_story_url" value="<%= hero.full_story_url %>">
+
+                    <label for="background_color">Цвет фона:</label>
+                    <input type="color" id="background_color" name="background_color" value="<%= hero.background_color %>">
+
+                    <label for="text_color">Цвет текста:</label>
+                    <input type="color" id="text_color" name="text_color" value="<%= hero.text_color %>">
+
+                    <label for="highlight_color">Цвет выделения:</label>
+                    <input type="color" id="highlight_color" name="highlight_color" value="<%= hero.highlight_color %>">
+
+                    <label for="secondary_color">Вторичный цвет:</label>
+                    <input type="color" id="secondary_color" name="secondary_color" value="<%= hero.secondary_color %>">
+
+                    <button type="submit">Изменить</button>
+                </form>
+
+                <% if (abilities.length > 0) { %>
+                    <% abilities.forEach(function(ability) { %>
+                        <form id="addAbilityForm" method="post" action="/edit_ability/<%= ability.ability_id %>?_method=PUT" enctype="multipart/form-data">
+                            <h2 style="color: #fff; text-align: center;">Редактировать способность:</h2>
+                            
+                            <input type="hidden" name="hero_id" value="<%= hero.hero_id %>">
+                
+                            <label for="name">Название способности:</label>
+                            <input type="text" id="name" name="name" value="<%= ability.name %>" required>
+                
+                            <label for="image_url">Изображение способности:</label>
+                            <input type="file" id="image_url" name="image_url" accept="image/*">
+                
+                            <label for="video_url">Видео способности:</label>
+                            <input type="file" id="video_url" name="video_url" accept="video/*">
+                
+                            <label for="description">Описание:</label>
+                            <textarea id="description" name="description" required><%= ability.description %></textarea>
+                
+                            <label for="specification">Спецификация (JSON):</label>
+                            <textarea id="specification" name="specification" required><%= JSON.stringify(ability.specification, null, 2) %></textarea>
+                
+                            <button type="submit">Изменить</button>
+                        </form>
+                    <% }); %>
+                <% } else { %>
+                    <p style="color: #fff; text-align: center;">У этого героя нет способностей.</p>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

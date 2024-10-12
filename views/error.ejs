@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ошибка 404</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <!-- Подключаем панель меню из файла menu.ejs -->
+    <%- include('menu.ejs') %>
+
+    <div class="main-sector">
+        <div class="error-page">
+            <h2>Внимание!</h2>
+            <% if (errorMessage) { %>
+                <p><%= errorMessage %></p>
+            <% } %>
+            <p>Нажмите <a id="warning" href="<%= link %>">здесь</a>, чтобы вернуться назад.</p>
+        </div>
+    </div>
+</body>
+</html>

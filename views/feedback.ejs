@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Главная страница</title>
+    <!-- Подключаем CSS стили -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Подключаем панель меню из файла menu.ejs -->
+    <%- include('menu.ejs') %>
+
+    <div class="main-sector">
+        <div id="feedback-form-div">
+            <h2>Форма обратной связи:</h2>
+            <form method="post" action="/feedback_answer" id="feedback-form">
+                <label for="Username">Ваше имя пользователя:</label>
+                <input type="text" name="Username" id="Username" placeholder="Введите ваше имя" required>
+                <label for="Useremail">Ваш email для обратной связи:</label>
+                <input type="email" name="Useremail" id="Useremail" placeholder="Введите ваш email" required>
+                <label for="Theme">Тема обращения:</label>
+                <input type="text" name="Theme" id="Theme" placeholder="Введите тему обращения" required>
+                <label for="Message">Сообщение:</label>
+                <textarea name="Message" id="Message" placeholder="Введите сообщение" required></textarea>
+                <input type="submit" value="Отправить" class="disabled" id="submit-button" disabled>
+            </form>
+        </div>
+    </div>
+
+    <!-- Подключаем jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            const form = $('#feedback-form');
+            const submitButton = $('#submit-button');
+
+            form.on('input', function() {
+                let allFilled = true;
+                form.find('input, textarea').each(function() {
+                    if ($(this).val() === '') {
+                        allFilled = false;
+                        return false; // Прерываем each, если нашли пустое поле
+                    }
+                });
+
+                if (allFilled) {
+                    submitButton.prop('disabled', false).removeClass('disabled');
+                } else {
+                    submitButton.prop('disabled', true).addClass('disabled');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
